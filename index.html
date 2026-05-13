@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>PMP Coach</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(135deg,#0f0c29 0%,#1a1a3e 50%,#0d1b2a 100%);
+  font-family:Georgia,serif;color:#e8e0d0;min-height:100vh;-webkit-tap-highlight-color:transparent;}
+.header{background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,215,100,0.2);
+  padding:13px 16px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;}
+.body{max-width:700px;margin:0 auto;padding:18px 14px 80px;}
+.card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,215,100,0.15);
+  border-radius:16px;padding:18px;margin-bottom:14px;}
+.btn-primary{background:linear-gradient(135deg,#ffd764,#f59e0b);color:#1a1a2e;border:none;
+  border-radius:10px;padding:11px 18px;font-size:14px;font-weight:bold;cursor:pointer;font-family:Georgia,serif;width:100%;}
+.btn-ghost{background:rgba(255,255,255,0.1);color:#e8e0d0;border:none;
+  border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:Georgia,serif;}
+.btn-sm{background:linear-gradient(135deg,#ffd764,#f59e0b);color:#1a1a2e;border:none;
+  border-radius:8px;padding:7px 11px;font-size:12px;font-weight:bold;cursor:pointer;}
+.btn-study{background:rgba(255,255,255,0.1);color:#e8e0d0;border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;}
+.btn-danger{background:transparent;color:#ef4444;border:1px solid #ef444466;
+  border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;}
+.badge{border-radius:20px;padding:3px 10px;font-size:12px;font-family:monospace;}
+.opt-btn{border-radius:10px;padding:13px 14px;margin-bottom:10px;cursor:pointer;
+  text-align:left;font-size:14px;width:100%;font-family:Georgia,serif;
+  display:flex;gap:10px;align-items:flex-start;line-height:1.6;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#e8e0d0;transition:all 0.15s;}
+.opt-btn:disabled{cursor:default;}
+.opt-correct{background:rgba(34,197,94,0.2)!important;border:1px solid #22c55e!important;color:#86efac!important;}
+.opt-wrong{background:rgba(239,68,68,0.2)!important;border:1px solid #ef4444!important;color:#fca5a5!important;}
+.diff-btn{border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;
+  background:transparent;border:1px solid rgba(255,255,255,0.15);color:#666;font-family:Georgia,serif;}
+.diff-btn.on{background:rgba(255,215,100,0.2);border-color:#ffd764;color:#ffd764;}
+.pbar{height:6px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:6px;}
+.pfill{height:100%;border-radius:3px;transition:width 0.5s;}
+.screen{display:none;} .screen.active{display:block;}
+.topic-row{display:flex;align-items:center;gap:12px;padding:14px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;margin-bottom:10px;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,215,100,0.3);
+  border-top-color:#ffd764;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HOME ═══ -->
+<div id="s-home" class="screen active">
+  <div class="header">
+    <span style="font-size:17px;font-weight:bold;color:#ffd764">🎓 PMP Coach</span>
+    <span id="h-days" class="badge" style="background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.4);color:#60a5fa"></span>
+  </div>
+  <div class="body">
+    <div class="card" style="background:linear-gradient(135deg,rgba(255,215,100,0.1),rgba(255,100,50,0.06));border-color:rgba(255,215,100,0.3);margin-bottom:22px">
+      <div style="font-size:11px;color:#ffd764;letter-spacing:2px;margin-bottom:4px">ANDREW RAMDAYAL'S PLAN</div>
+      <h1 style="font-size:22px;color:#fff;margin-bottom:6px">Your PMP Coach</h1>
+      <p style="font-size:13px;color:#b0a8c0;margin-bottom:16px">Exam: <strong style="color:#ffd764">June 15, 2026</strong> · <span id="h-daysnum"></span> days left · 2 hrs/day</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center;flex:1;min-width:80px">
+          <div id="st-topics" style="font-size:22px;font-weight:bold;color:#ffd764">0</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">Topics Started</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center;flex:1;min-width:80px">
+          <div id="st-total" style="font-size:22px;font-weight:bold;color:#60a5fa">0</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">Qs Answered</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center;flex:1;min-width:80px">
+          <div id="st-acc" style="font-size:22px;font-weight:bold;color:#888">--</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">Accuracy</div>
+        </div>
+      </div>
+      <div id="save-row" style="display:none;margin-top:12px;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:#22c55e">✅ Progress saved on this device</span>
+        <button class="btn-danger" onclick="resetProgress()">Reset</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#888;letter-spacing:1px;margin-bottom:12px">TOPICS — CHOOSE TO STUDY OR QUIZ</div>
+    <div id="topic-list"></div>
+    <div class="card" style="background:rgba(96,165,250,0.06);border-color:rgba(96,165,250,0.2);margin-top:8px">
+      <div style="font-size:11px;color:#60a5fa;margin-bottom:8px">💡 STRATEGY</div>
+      <p style="font-size:13px;color:#b0a8c0;line-height:1.7;margin:0">
+        Study → Quiz until <strong style="color:#fff">75%+</strong> → Move on.<br>
+        <em style="color:#ffd764">Think like a PM, not a student. — Andrew Ramdayal</em>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STUDY ═══ -->
+<div id="s-study" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="go('home')">← Back</button>
+    <span id="study-label" style="font-size:13px;color:#ffd764;font-weight:bold"></span>
+    <button class="btn-sm" onclick="startQuiz(currentTopic)">Quiz →</button>
+  </div>
+  <div class="body">
+    <div class="card" style="border-color:rgba(255,215,100,0.25)">
+      <div style="font-size:11px;color:#ffd764;margin-bottom:12px;letter-spacing:1px">📖 STUDY NOTES</div>
+      <div id="study-body" style="font-size:14px;line-height:1.9;color:#d4cdc4;white-space:pre-wrap"></div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz(currentTopic)">⚡ Test Your Knowledge</button>
+  </div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="s-quiz" class="screen">
+  <div class="header">
+    <button class="btn-ghost" onclick="go('home')">← Topics</button>
+    <span id="quiz-label" style="font-size:13px;color:#ffd764;font-weight:bold"></span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span id="sess-badge" class="badge" style="background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.4);color:#60a5fa">0/0</span>
+      <span id="topic-badge" class="badge" style="display:none"></span>
+    </div>
+  </div>
+  <div class="body">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div id="diff-info" style="font-size:12px;color:#888"></div>
+      <div style="display:flex;gap:4px">
+        <button class="diff-btn" id="db-easy"   onclick="setDiff('easy')">easy</button>
+        <button class="diff-btn on" id="db-medium" onclick="setDiff('medium')">medium</button>
+        <button class="diff-btn" id="db-hard"   onclick="setDiff('hard')">hard</button>
+      </div>
+    </div>
+    <div id="quiz-body"></div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG — replace with your Render URL after deployment ───────────────────
+const SERVER_URL = "";
+// e.g. "https://pmp-coach-proxy.onrender.com"
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TOPICS = [
+  {id:"intro",     label:"Introduction & Exam Details",    day:"1",    icon:"🎯"},
+  {id:"terms",     label:"Project Management Terms",       day:"2",    icon:"📖"},
+  {id:"principles",label:"PM Principles",                  day:"3",    icon:"⚖️"},
+  {id:"domains",   label:"PM Performance Domains",         day:"4",    icon:"🗂️"},
+  {id:"predictive",label:"Traditional / Predictive PM",    day:"5-8",  icon:"📋"},
+  {id:"agile",     label:"Agile Methods & Delivery",       day:"9-10", icon:"🔄"},
+  {id:"agile_s",   label:"Agile Stakeholder Management",   day:"11",   icon:"🤝"},
+  {id:"agile_p",   label:"Agile Planning & Improvement",   day:"12",   icon:"📈"},
+  {id:"hybrid",    label:"Hybrid PM & Ethics",             day:"13",   icon:"🔀"},
+  {id:"eco",       label:"PMP Exam Content Outline (ECO)", day:"14-15",icon:"📝"},
+  {id:"mindset",   label:"PMP Mindset & Exam Tips",        day:"16-17",icon:"🧠"},
+];
+
+const STUDY_NOTES = {
+intro:`📌 OVERVIEW
+The PMP exam tests project management judgment — not just knowledge. 50% predictive (waterfall), 50% agile/hybrid. It has 180 questions in 230 minutes.
+
+🔑 KEY CONCEPTS
+• 180 questions: multiple choice, drag-drop, matching, hotspot
+• 230 minutes with two optional 10-min breaks
+• Administered at Pearson VUE centers or online proctored
+• No disclosed passing score — target 70%+ consistently in practice
+• Eligibility: 36 months PM experience + 35 hours training (your Udemy course qualifies)
+
+⚡ EXAM TIPS
+• Read questions twice — find what's REALLY being asked
+• PMI wants proactive, ethical, communicative PMs
+• When stuck: pick the answer where the PM takes action over escalation
+• Eliminate obviously wrong answers first
+
+🧠 MEMORY TRICK
+PACE: Proactive, Adaptive, Communicative, Ethical — the PMI mindset.
+
+⚠️ COMMON PITFALLS
+Don't memorize process names — understand WHEN and WHY each is used. Technical thinking fails on this exam; leadership thinking wins.`,
+
+terms:`📌 OVERVIEW
+PMI terminology is the language of every exam question. Precise definitions protect you from trap answers that use real terms incorrectly.
+
+🔑 KEY TERMS
+• Project: Temporary endeavor to create a unique product, service, or result
+• Program: Group of related projects managed together for benefits not achievable individually
+• Portfolio: Projects/programs managed as a group to achieve strategic objectives
+• Stakeholder: Anyone affected by or who can affect the project
+• Sponsor: Provides financial resources, champions the project at executive level
+• Deliverable: Unique, verifiable product/result produced to complete a process
+• Constraint: Limiting factor — time, cost, scope, quality, resources, risk
+• Assumption: Factor believed true without proof — must be documented
+• Risk: Uncertain event with positive or negative effect if it occurs
+• Issue: A risk that has already occurred — needs immediate management
+• Baseline: Approved version of scope/schedule/cost — used to measure performance
+• Change Request: Formal proposal to modify any document, deliverable, or baseline
+• WBS: Hierarchical decomposition of total project scope
+• Critical Path: Longest sequence of tasks — determines minimum project duration
+• Float: Time an activity can be delayed without delaying the project end date
+
+⚡ EXAM TIPS
+Issue vs Risk is a common trap — issues are happening NOW, risks are uncertain future events. Assumptions must always be in the Assumption Log.
+
+🧠 MEMORY TRICK
+TACQ-RSB: Time, Assumptions, Constraints, Quality, Risk, Scope, Budget — the 7 things a PM always tracks.
+
+⚠️ COMMON PITFALLS
+Constraint LIMITS you (fixed deadline). Assumption is what you BELIEVE to be true (vendor delivers on time).`,
+
+principles:`📌 OVERVIEW
+PMBOK 7th Edition is principles-based. The 12 PM Principles guide how a PM thinks and behaves across all environments — predictive, agile, and hybrid.
+
+🔑 THE 12 PRINCIPLES
+1. Be a diligent, respectful, and caring steward
+2. Create a collaborative project team environment
+3. Effectively engage with stakeholders
+4. Focus on value — everything must deliver value
+5. Recognize, evaluate, and respond to system interactions
+6. Demonstrate leadership behaviors
+7. Tailor based on context — one size does NOT fit all
+8. Build quality into processes and deliverables
+9. Navigate complexity
+10. Optimize risk responses
+11. Embrace adaptability and resiliency
+12. Enable change to achieve the envisioned future state
+
+⚡ EXAM TIPS
+Value delivery is PMI's #1 priority. Tailoring is critical — context determines the method, not a fixed rulebook. Principle questions ask "what should the PM DO?" — choose the most ethical, proactive, value-focused answer.
+
+🧠 MEMORY TRICK
+VEST-CLAN-QRA: Value, Engage Stakeholders, Tailor — Collaborate, Lead, Adapt — Quality, Risk, Agility.
+
+⚠️ COMMON PITFALLS
+Principles are GUIDELINES for thinking, not processes to follow. Don't confuse them with Knowledge Areas.`,
+
+domains:`📌 OVERVIEW
+PMBOK 7 defines 8 Performance Domains — areas of focus that run throughout the entire project simultaneously, not in phases.
+
+🔑 THE 8 DOMAINS
+1. Stakeholders — Engagement, communication, managing expectations
+2. Team — Building, leading, and developing the project team
+3. Development Approach & Life Cycle — Choosing predictive, agile, or hybrid
+4. Planning — Estimating, scheduling, budgeting across the project
+5. Project Work — Managing day-to-day work, procurement, communications
+6. Delivery — Ensuring scope, quality, and value are delivered
+7. Measurement — Tracking performance, forecasting, earned value
+8. Uncertainty — Managing risk, ambiguity, and complexity
+
+⚡ EXAM TIPS
+Map exam questions to domains: stakeholder complaints = Stakeholders domain; team conflict = Team domain; scope creep = Delivery domain; schedule slippage = Measurement domain.
+
+🧠 MEMORY TRICK
+STDP-PDMU: Stakeholders, Team, Dev Approach, Planning, Project Work, Delivery, Measurement, Uncertainty.
+
+⚠️ COMMON PITFALLS
+Don't treat domains as sequential phases. They operate continuously and simultaneously.`,
+
+predictive:`📌 OVERVIEW
+Predictive (Waterfall) PM is used when requirements are well-defined and risks are manageable. All planning done upfront. About 50% of the PMP exam involves predictive scenarios.
+
+🔑 LIFE CYCLE PHASES
+• Initiating: Project charter, identify stakeholders
+• Planning: All management plans, WBS, estimates, schedule, budget
+• Executing: Direct work, manage quality, acquire/develop team
+• Monitoring & Controlling: Track performance, manage changes
+• Closing: Close project, release resources, lessons learned
+
+🔑 KEY EVM FORMULAS
+• EV = % Complete × BAC
+• CV = EV − AC (negative = over budget)
+• SV = EV − PV (negative = behind schedule)
+• CPI = EV ÷ AC (less than 1 = over budget)
+• SPI = EV ÷ PV (less than 1 = behind schedule)
+• EAC = BAC ÷ CPI
+• ETC = EAC − AC
+• PERT = (O + 4M + P) ÷ 6
+
+⚡ EXAM TIPS
+Change requests ALWAYS go through Integrated Change Control. Gold plating (adding unrequested features) is always wrong. CPI/SPI less than 1.0 = bad performance.
+
+🧠 MEMORY TRICK
+"Less than one, you're not done — it costs/takes more than planned."
+
+⚠️ COMMON PITFALLS
+Never skip change control even for small changes. Never make informal changes to the baseline.`,
+
+agile:`📌 OVERVIEW
+Agile is iterative and incremental. Requirements evolve through collaboration. Key frameworks: Scrum, Kanban, XP.
+
+🔑 AGILE MANIFESTO VALUES
+• Individuals and interactions OVER processes and tools
+• Working software OVER comprehensive documentation
+• Customer collaboration OVER contract negotiation
+• Responding to change OVER following a plan
+
+🔑 SCRUM FRAMEWORK
+Roles: Product Owner (PO), Scrum Master (SM), Development Team
+Artifacts: Product Backlog, Sprint Backlog, Increment
+Events: Sprint (1-4 weeks), Sprint Planning, Daily Scrum (15 min), Sprint Review, Sprint Retrospective
+• PO owns and prioritizes the Product Backlog
+• SM is a servant-leader — facilitates, removes impediments, does NOT assign tasks
+• Team commits to a Sprint Goal — no scope changes mid-sprint
+• Definition of Done (DoD): agreed criteria for truly complete work
+
+🔑 KANBAN
+• Visualize workflow on a board
+• WIP Limits — limit concurrent work to improve flow
+• No fixed sprints — continuous flow
+
+⚡ EXAM TIPS
+Scrum Master does NOT manage the team — they serve it. PO sets priorities, team decides HOW to do the work. Sprint backlog is owned by the Development Team.
+
+🧠 MEMORY TRICK
+3-3-3: 3 Roles, 3 Artifacts, 3+2 Events.
+
+⚠️ COMMON PITFALLS
+Velocity is for planning only — never use it to pressure or evaluate the team.`,
+
+agile_s:`📌 OVERVIEW
+In agile, stakeholder engagement is continuous and collaborative. Stakeholders are active participants, not just recipients of status reports.
+
+🔑 KEY CONCEPTS
+• Product Owner represents stakeholder interests to the team
+• Sprint Review is the key stakeholder touchpoint — demo working product
+• Information Radiators (boards, burndowns) keep stakeholders passively informed
+• Feedback loops — frequent demos validate direction before too much is built
+• Servant Leadership — PM/SM removes friction to enable value delivery
+
+🔑 ENGAGEMENT LEVELS
+Unaware → Resistant → Neutral → Supportive → Leading
+Goal: move all key stakeholders to Supportive or Leading
+
+⚡ EXAM TIPS
+When a stakeholder is unhappy in agile, prioritize face-to-face conversation and demo of working software. PO is responsible for stakeholder satisfaction. Retrospectives can also address team-stakeholder issues.
+
+🧠 MEMORY TRICK
+URNS-L: Unaware, Resistant, Neutral, Supportive, Leading.
+
+⚠️ COMMON PITFALLS
+Don't ignore resistant stakeholders — they can derail the project. Don't communicate equally with all — tailor by interest and influence.`,
+
+agile_p:`📌 OVERVIEW
+Agile planning is adaptive — just enough planning at each level, continuously refined. Continuous improvement (Kaizen) is built into every sprint via retrospectives.
+
+🔑 5 LEVELS OF PLANNING
+Vision → Roadmap → Release → Sprint → Daily
+
+🔑 ESTIMATION TECHNIQUES
+• Story Points: Relative sizing — not hours
+• Planning Poker: Simultaneous reveal to avoid anchoring
+• T-Shirt Sizing: XS/S/M/L/XL for high-level estimation
+• Velocity: Average story points per sprint — used for forecasting only
+
+🔑 IMPROVEMENT TOOLS
+• Sprint Retrospective: What went well, what to improve, action items
+• Burndown Chart: Remaining work over time — trending down is good
+• Burnup Chart: Completed work rising toward goal
+• Cumulative Flow Diagram: Visualizes bottlenecks
+
+⚡ EXAM TIPS
+Retrospective actions must be specific and assigned. Burndown flat or rising = impediment or scope creep. Velocity only stabilizes after 3-5 sprints.
+
+🧠 MEMORY TRICK
+VRP-SD: Vision, Roadmap, Release, Sprint, Daily.
+
+⚠️ COMMON PITFALLS
+Story points ≠ hours. Never convert directly. Skipping retrospectives removes the team's improvement mechanism.`,
+
+hybrid:`📌 OVERVIEW
+Hybrid combines predictive and agile. Most real-world projects are hybrid. PMI Code of Ethics: Responsibility, Respect, Fairness, Honesty.
+
+🔑 HYBRID APPROACHES
+• Fixed budget/timeline (predictive) + iterative delivery (agile)
+• Rolling Wave Planning: Near-term detailed, future work high-level
+• Tailoring: Choose approach based on requirements clarity, team experience, risk, contract type
+
+🔑 PMI CODE OF ETHICS
+• Responsibility: Own decisions and consequences. Report unethical behavior.
+• Respect: Show high regard for people and resources. Listen actively.
+• Fairness: Make decisions impartially. Disclose conflicts of interest immediately.
+• Honesty: Communicate accurately. Never deceive.
+
+🔑 ETHICS SCENARIOS
+• Conflict of interest → Disclose immediately
+• Team misconduct → Address directly first, then escalate
+• Pressure to falsify → Refuse always
+• Accepting gifts → Avoid or disclose per policy
+
+⚡ EXAM TIPS
+Ethics questions: always be honest, transparent, proactive. When in doubt: disclose, document, escalate through proper channels.
+
+🧠 MEMORY TRICK
+RRFH: Responsibility, Respect, Fairness, Honesty.
+
+⚠️ COMMON PITFALLS
+Never cover up problems. Hybrid ≠ use all tools — thoughtfully select what fits the context.`,
+
+eco:`📌 OVERVIEW
+The ECO (Exam Content Outline) is PMI's official exam blueprint. It defines exactly what percentage of questions come from each domain.
+
+🔑 ECO DOMAIN WEIGHTS
+• Domain 1 — People: 42%
+• Domain 2 — Process: 50%
+• Domain 3 — Business Environment: 8%
+
+🔑 PEOPLE DOMAIN (42%) — KEY TASKS
+• Manage conflicts within the team
+• Lead the team with servant leadership
+• Support team performance and growth
+• Empower team members and build collaboration
+• Engage and support stakeholders
+• Remove impediments and blockers
+
+🔑 PROCESS DOMAIN (50%) — KEY TASKS
+• Execute with urgency, manage stakeholder engagement
+• Assess and manage risks
+• Manage schedule, budget, quality, scope, resources
+• Determine appropriate methodology (predictive/agile/hybrid)
+• Plan and manage procurement and changes
+
+🔑 BUSINESS ENVIRONMENT (8%) — KEY TASKS
+• Plan and manage compliance requirements
+• Evaluate and deliver project benefits and value
+• Support organizational change
+
+⚡ EXAM TIPS
+People (42%) = largest domain — leadership and communication questions are very common. ECO questions test whether you understand the INTENT of each domain.
+
+🧠 MEMORY TRICK
+PPB 50-42-8: Process most, People close behind, Business smallest.
+
+⚠️ COMMON PITFALLS
+Candidates over-prepare for Process and under-prepare for People. People tasks require situational judgment — practice scenario questions.`,
+
+mindset:`📌 OVERVIEW
+The PMP is a MINDSET test, not a knowledge test. PMI wants you to think like an experienced, ethical, proactive PM — not like you might behave in real life.
+
+🔑 THE PMI MINDSET RULES
+1. Always communicate proactively — don't wait for problems to escalate
+2. Always follow the process — use formal change control, no shortcuts
+3. Always put people first — team and stakeholders over tasks and tools
+4. Always be honest — report real status, never hide bad news
+5. Empower the team — delegate and trust
+6. Focus on value — every decision delivers value to the business
+7. Prevention over correction — proactive risk management wins
+8. Servant leader in agile — SM/PM serves the team
+
+🔑 ANSWER ELIMINATION STRATEGY
+ELIMINATE: answers that lie to stakeholders, skip processes, micromanage, jump to solutions
+PREFER: gather more information first, engage stakeholders directly, follow PMI processes, document everything
+
+🔑 EXAM DAY TIPS
+• Read the LAST sentence first — it tells you what's asked
+• Mark difficult questions and return later — max 90 seconds per question
+• Look for: "FIRST", "BEST", "NEXT" — these change the answer
+• Agile questions: think servant leader, empowerment, continuous delivery
+• Predictive questions: think formal processes, change control, documentation
+
+🧠 MEMORY TRICK
+"What would the PERFECT PMI project manager do?" — that's always the answer.
+
+⚠️ COMMON PITFALLS
+Do NOT apply real-world experience if it conflicts with PMI's way. The exam has its own reality. Learn to answer in PMI's world.`
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let scores = {};
+let totalAnswered = 0;
+let currentTopic = null;
+let difficulty = "medium";
+let sessionCorrect = 0;
+let sessionTotal = 0;
+let history = [];
+let currentQ = null;
+let selected = null;
+
+// ── localStorage (standard browser — works outside Claude sandbox) ────────────
+function saveProgress() {
+  try { localStorage.setItem("pmp-v3", JSON.stringify({scores, totalAnswered})); } catch(e){}
+}
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem("pmp-v3");
+    if (raw) { const d = JSON.parse(raw); scores = d.scores||{}; totalAnswered = d.totalAnswered||0; }
+  } catch(e){}
+}
+function resetProgress() {
+  if (!confirm("Reset ALL progress? Cannot be undone.")) return;
+  try { localStorage.removeItem("pmp-v3"); } catch(e){}
+  scores = {}; totalAnswered = 0;
+  renderHome();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const getDaysLeft = () => Math.max(0, Math.ceil((new Date("2026-06-15")-new Date())/86400000));
+const scoreColor = s => s>=80?"#22c55e":s>=60?"#f59e0b":"#ef4444";
+const grade = s => s>=80?{l:"Strong",e:"💪"}:s>=60?{l:"Developing",e:"📈"}:{l:"Needs Work",e:"🔧"};
+const topicScore = id => {
+  const a = scores[id]; if(!a||!a.length) return null;
+  return Math.round(a.reduce((x,y)=>x+y,0)/a.length*100);
+};
+const overallScore = () => {
+  const all = Object.values(scores).flat(); if(!all.length) return null;
+  return Math.round(all.reduce((x,y)=>x+y,0)/all.length*100);
+};
+const go = (screen) => {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+screen).classList.add('active');
+  window.scrollTo(0,0);
+};
+
+// ── API call via your Render proxy ───────────────────────────────────────────
+async function askClaude(system, user) {
+  const res = await fetch(SERVER_URL + "/ask", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1000,
+      system,
+      messages:[{role:"user",content:user}]
+    })
+  });
+  const data = await res.json();
+  return data.content?.[0]?.text || "";
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderHome() {
+  const days = getDaysLeft();
+  document.getElementById("h-days").textContent = days+"d to exam";
+  document.getElementById("h-daysnum").textContent = days;
+  const overall = overallScore();
+  document.getElementById("st-topics").textContent = Object.keys(scores).length;
+  document.getElementById("st-total").textContent = totalAnswered;
+  const accEl = document.getElementById("st-acc");
+  accEl.textContent = overall!==null ? overall+"%" : "--";
+  accEl.style.color = overall!==null ? scoreColor(overall) : "#888";
+  const saveRow = document.getElementById("save-row");
+  saveRow.style.display = totalAnswered>0 ? "flex" : "none";
+  const list = document.getElementById("topic-list");
+  list.innerHTML = TOPICS.map(t => {
+    const s = topicScore(t.id);
+    const g = s!==null ? grade(s) : null;
+    const bar = s!==null ? `<div class="pbar"><div class="pfill" style="width:${s}%;background:${scoreColor(s)}"></div></div>
+      <div style="font-size:11px;color:${scoreColor(s)};margin-top:3px">${g.e} ${s}% — ${g.l}</div>` : "";
+    return `<div class="topic-row">
+      <span style="font-size:22px;flex-shrink:0">${t.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:bold;color:#e8e0d0">${t.label}</div>
+        <div style="font-size:11px;color:#555;margin-top:2px">Day ${t.day}</div>
+        ${bar}
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn-study" onclick="openStudy('${t.id}')">📖 Study</button>
+        <button class="btn-sm" onclick="startQuiz('${t.id}')">⚡ Quiz</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── STUDY ─────────────────────────────────────────────────────────────────────
+function openStudy(topicId) {
+  currentTopic = topicId;
+  const t = TOPICS.find(x=>x.id===topicId);
+  document.getElementById("study-label").textContent = t.icon+" "+t.label;
+  document.getElementById("study-body").textContent = STUDY_NOTES[topicId] || "Study notes coming soon.";
+  go("study");
+}
+function startQuizFromStudy() { startQuiz(currentTopic); }
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+function startQuiz(topicId) {
+  currentTopic = topicId;
+  const t = TOPICS.find(x=>x.id===topicId);
+  document.getElementById("quiz-label").textContent = t.icon+" Quiz";
+  sessionCorrect = 0; sessionTotal = 0;
+  history = []; difficulty = "medium";
+  updateDiffButtons();
+  go("quiz");
+  generateQuestion();
+}
+
+function setDiff(d) {
+  difficulty = d;
+  updateDiffButtons();
+}
+function updateDiffButtons() {
+  ["easy","medium","hard"].forEach(d=>{
+    document.getElementById("db-"+d).className = "diff-btn"+(difficulty===d?" on":"");
+  });
+  const icons = {easy:"🟢 Easy",medium:"🟡 Medium",hard:"🔴 Hard"};
+  const pct = sessionTotal>0 ? ` · ${Math.round(sessionCorrect/sessionTotal*100)}% this session` : "";
+  document.getElementById("diff-info").textContent = "Adaptive: "+icons[difficulty]+pct;
+}
+
+async function generateQuestion() {
+  const t = TOPICS.find(x=>x.id===currentTopic);
+  const qb = document.getElementById("quiz-body");
+  qb.innerHTML = `<div class="card" style="text-align:center;padding:60px 20px">
+    <div style="font-size:30px;margin-bottom:14px">🤔</div>
+    <div style="color:#888"><span class="spinner"></span>Crafting your question...</div>
+  </div>`;
+
+  const pastQs = history.slice(-5).map(h=>h.question).filter(Boolean).join(" || ");
+  const diffGuide = {
+    easy:"EASY: Clear scenario, one obviously best PMI answer. End with FIRST/NEXT/BEST.",
+    medium:"MEDIUM: Add competing priorities or two plausible answers. Requires PMI mindset to distinguish.",
+    hard:"HARD: Use EVM numbers (actual CPI/SPI values), ethical dilemma, or multi-constraint tradeoff. All 4 options feel correct."
+  };
+  const qTypes = ["situational FIRST/NEXT/BEST","EVM calculation","agile role/ceremony","stakeholder conflict","change control","risk response","ethical dilemma","process sequence"];
+  const qType = qTypes[Math.floor(Math.random()*qTypes.length)];
+  const perfNote = history.length>=3 ?
+    `Student: ${history.filter(h=>h.correct).length}/${history.length} correct.${history.filter(h=>h.correct).length/history.length<0.5?" Struggling.":""}`:"";
+
+  const system = `You are a senior PMP exam question writer mirroring real PMI exam style (Andrew Ramdayal approach).
+RULES:
+1. ALWAYS write scenario-based situational questions — a real project story
+2. End with "What should the PM do FIRST?", "What is the BEST next step?", or similar
+3. All 4 options must be plausible PM actions — never obviously wrong
+4. Exactly ONE best answer per PMI standards
+5. Common wrong-answer traps: escalating too early, skipping change control, gold-plating, micromanaging, being reactive
+6. ECO domain split: People 42%, Process 50%, Business Environment 8%
+7. Return ONLY valid JSON — no markdown, no text outside JSON
+Format: {"question":"...","options":{"A":"...","B":"...","C":"...","D":"..."},"answer":"A","rationale":"...","domain":"People|Process|Business Environment"}`;
+
+  const user = `Topic: "${t.label}" | Difficulty: ${difficulty.toUpperCase()} | Type: ${qType}
+${diffGuide[difficulty]}
+${pastQs?"Avoid repeating: "+pastQs:""}
+${perfNote}
+Return ONLY JSON.`;
+
+  try {
+    const text = await askClaude(system, user);
+    currentQ = JSON.parse(text.replace(/```json|```/g,"").trim());
+    selected = null;
+    renderQuestion();
+  } catch(e) {
+    qb.innerHTML = `<div class="card" style="text-align:center;padding:40px">
+      <div style="color:#ef4444;margin-bottom:12px">⚠️ Could not generate question.<br><small style="color:#888">${e.message||"Check your server URL."}</small></div>
+      <button class="btn-sm" onclick="generateQuestion()">Try Again</button>
+    </div>`;
+  }
+}
+
+function renderQuestion() {
+  const t = TOPICS.find(x=>x.id===currentTopic);
+  const domainColor = currentQ.domain==="People"?"#60a5fa":currentQ.domain==="Business Environment"?"#a78bfa":"#22c55e";
+  const domainBg = currentQ.domain==="People"?"rgba(96,165,250,0.15)":currentQ.domain==="Business Environment"?"rgba(167,139,250,0.15)":"rgba(34,197,94,0.15)";
+  const domainBorder = currentQ.domain==="People"?"#60a5fa44":currentQ.domain==="Business Environment"?"#a78bfa44":"#22c55e44";
+  const icons = {easy:"🟢",medium:"🟡",hard:"🔴"};
+
+  const tscore = topicScore(currentTopic);
+  const tb = document.getElementById("topic-badge");
+  if (tscore!==null) {
+    tb.style.display="inline";
+    tb.style.background=scoreColor(tscore)+"22";
+    tb.style.border=`1px solid ${scoreColor(tscore)}66`;
+    tb.style.color=scoreColor(tscore);
+    tb.textContent=tscore+"%";
+  } else { tb.style.display="none"; }
+  document.getElementById("sess-badge").textContent=`${sessionCorrect}/${sessionTotal}`;
+
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="card" style="border-color:rgba(255,215,100,0.2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:#888">Q${sessionTotal+1}</span>
+          <span style="font-size:10px;background:rgba(255,215,100,0.15);color:#ffd764;border:1px solid rgba(255,215,100,0.3);border-radius:4px;padding:2px 7px">${icons[difficulty]} ${difficulty}</span>
+        </div>
+        ${currentQ.domain?`<span style="font-size:10px;border-radius:4px;padding:2px 8px;font-weight:bold;background:${domainBg};color:${domainColor};border:1px solid ${domainBorder}">ECO: ${currentQ.domain}</span>`:""}
+      </div>
+      <p style="margin:0;font-size:15px;line-height:1.75;color:#e8e0d0">${currentQ.question}</p>
+    </div>
+    <div id="options">
+      ${["A","B","C","D"].map(opt=>`
+        <button class="opt-btn" id="opt-${opt}" onclick="handleAnswer('${opt}')">
+          <span style="font-weight:bold;min-width:20px;color:#ffd764;flex-shrink:0">${opt}.</span>
+          <span>${currentQ.options[opt]}</span>
+        </button>`).join("")}
+    </div>
+    <div id="explain-box"></div>
+    ${sessionTotal>=3?`
+    <div class="card" style="background:rgba(96,165,250,0.05);border-color:rgba(96,165,250,0.15);margin-top:14px">
+      <div style="font-size:11px;color:#60a5fa;margin-bottom:8px">SESSION PROGRESS</div>
+      <div class="pbar"><div class="pfill" style="width:${Math.round(sessionCorrect/sessionTotal*100)}%;background:${scoreColor(Math.round(sessionCorrect/sessionTotal*100))}"></div></div>
+      <div style="font-size:12px;margin-top:5px;color:#888">${sessionCorrect}/${sessionTotal} correct · Adapting to: <span style="color:#ffd764">${difficulty}</span></div>
+    </div>`:""}
+  `;
+}
+
+async function handleAnswer(choice) {
+  if (selected !== null) return;
+  selected = choice;
+  const correct = choice === currentQ.answer;
+
+  // Disable all buttons + color them
+  ["A","B","C","D"].forEach(opt => {
+    const btn = document.getElementById("opt-"+opt);
+    btn.disabled = true;
+    if (opt === currentQ.answer) btn.classList.add("opt-correct");
+    else if (opt === choice && !correct) btn.classList.add("opt-wrong");
+  });
+
+  // Update scores
+  sessionTotal++; if(correct) sessionCorrect++;
+  document.getElementById("sess-badge").textContent=`${sessionCorrect}/${sessionTotal}`;
+  const id = currentTopic;
+  if (!scores[id]) scores[id] = [];
+  scores[id] = [...scores[id], correct?1:0].slice(-10);
+  totalAnswered++;
+  saveProgress();
+  renderHome(); // update home stats in background
+
+  // Adapt difficulty
+  const rec = history.slice(-3);
+  const recCorrect = rec.filter(h=>h.correct).length;
+  if(sessionTotal>=3){
+    if(recCorrect===3 && difficulty!=="hard") setDiff("hard");
+    else if(recCorrect===0 && difficulty!=="easy") setDiff("easy");
+    else if(recCorrect===1||recCorrect===2) setDiff("medium");
+  }
+  history.push({question:currentQ.question, correct});
+
+  // Show explanation area with loading
+  const eb = document.getElementById("explain-box");
+  eb.innerHTML = `<div class="card" style="background:${correct?"rgba(34,197,94,0.08)":"rgba(239,68,68,0.08)"};border:1px solid ${correct?"#22c55e44":"#ef444444"};margin-top:4px">
+    <div style="font-size:17px;font-weight:bold;margin-bottom:10px">
+      ${correct?"✅ Correct!":"❌ Incorrect — Answer: "+currentQ.answer+") "+currentQ.options[currentQ.answer]}
+    </div>
+    <div id="exp-text" style="color:#888;font-size:13px"><span class="spinner"></span>Coach is explaining...</div>
+  </div>`;
+
+  // Get explanation
+  try {
+    const exp = await askClaude(
+      `You are Andrew Ramdayal coaching a PMP candidate live.
+1. Affirm or correct the student warmly (1 sentence)
+2. WHY the correct answer is right — cite the PMI principle being tested
+3. WHY each wrong answer is tempting but incorrect (one line each)
+4. End with a bold exam tip for similar questions
+Max 160 words. Be direct and practical.`,
+      `Question: ${currentQ.question}
+A: ${currentQ.options.A} B: ${currentQ.options.B} C: ${currentQ.options.C} D: ${currentQ.options.D}
+Correct: ${currentQ.answer}) ${currentQ.options[currentQ.answer]}
+Student chose: ${choice}) ${currentQ.options[choice]} — ${correct?"CORRECT":"INCORRECT"}
+Domain: ${currentQ.domain||"Process"}`
+    );
+    document.getElementById("exp-text").innerHTML =
+      `<div style="font-size:11px;color:#ffd764;margin-bottom:6px;letter-spacing:0.5px">COACH EXPLANATION</div>
+       <div style="font-size:13px;line-height:1.8;color:#c8c0b8;white-space:pre-wrap">${exp}</div>
+       <button class="btn-primary" style="margin-top:16px" onclick="generateQuestion()">Next Question →</button>`;
+  } catch(e) {
+    document.getElementById("exp-text").innerHTML =
+      `<div style="font-size:13px;color:#c8c0b8">${currentQ.rationale||"See answer above."}</div>
+       <button class="btn-primary" style="margin-top:16px" onclick="generateQuestion()">Next Question →</button>`;
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadProgress();
+renderHome();
+</script>
+</body>
+</html>
